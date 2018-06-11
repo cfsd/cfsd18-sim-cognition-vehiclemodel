@@ -56,6 +56,10 @@ void VehicleModel::setUp(std::map<std::string, std::string> commandlineArguments
   m_magicFormulaE=(commandlineArguments["magicFormulaE"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["magicFormulaE"]))) : (m_magicFormulaE);
   double F =(commandlineArguments["freq"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["freq"]))) : (0.05);
   m_dt = 1.0/F;
+  std::cout<<"VehicleModel set up with "<<commandlineArguments.size()<<" commandlineArguments: "<<std::endl;
+  for (std::map<std::string, std::string >::iterator it = commandlineArguments.begin();it !=commandlineArguments.end();it++){
+    std::cout<<it->first<<" "<<it->second<<std::endl;
+  }
 }
 
 void VehicleModel::tearDown()
@@ -68,19 +72,19 @@ void VehicleModel::nextContainer(cluon::data::Envelope &a_container)
     std::unique_lock<std::mutex> l(m_groundAccelerationMutex);
     auto groundDeceleration = cluon::extractMessage<opendlv::proxy::GroundDecelerationRequest>(std::move(a_container));
     m_groundAcceleration = -groundDeceleration.groundDeceleration();
-    //std::cout<<"GroundAcceleration recieved = "<<m_groundAcceleration<<"\n";
+    //std::cout<<"VehicleModel recieved groundDeceleration = "<<m_groundAcceleration<<"\n";
     //m_newAcc = true;
   } else if (a_container.dataType() == opendlv::proxy::GroundAccelerationRequest::ID()) {
     std::unique_lock<std::mutex> l(m_groundAccelerationMutex);
     auto groundAcceleration = cluon::extractMessage<opendlv::proxy::GroundAccelerationRequest>(std::move(a_container));
     m_groundAcceleration = groundAcceleration.groundAcceleration();
-    //std::cout<<"GroundAcceleration recieved = "<<m_groundAcceleration<<"\n";
+    //std::cout<<"VehicleModel recieved groundAcceleration = "<<m_groundAcceleration<<"\n";
     //m_newAcc = true;
   } else if (a_container.dataType() == opendlv::logic::action::AimPoint::ID()) {
     std::unique_lock<std::mutex> m(m_groundSteeringAngleMutex);
     auto groundSteeringAngle = cluon::extractMessage<opendlv::logic::action::AimPoint>(std::move(a_container));
     m_groundSteeringAngle = groundSteeringAngle.azimuthAngle();
-    //std::cout<<"groundSteeringAngle recieved = "<<m_groundSteeringAngle<<"\n";
+    //std::cout<<"VehicleModel recieved AimPoint = "<<m_groundSteeringAngle<<"\n";
   }
 }
 
@@ -93,7 +97,7 @@ void VehicleModel::body(){
     groundAccelerationCopy = m_groundAcceleration;
     groundSteeringAngleCopy = m_groundSteeringAngle;
   }
-
+  //std::cout<<"VehicleModel body: "<<"groundAccelerationCopy: "<<groundAccelerationCopy<<" AimPoint: "<<m_groundSteeringAngle<<std::endl;
   if (std::abs(groundSteeringAngleCopy-m_prevSteerAngle)/m_dt>(80.0*3.14159265/180.0)){
     if (groundSteeringAngleCopy > m_prevSteerAngle) {
       groundSteeringAngleCopy = m_dt*80.0*3.14159265/180.0 + m_prevSteerAngle;
@@ -177,11 +181,11 @@ void VehicleModel::body(){
   kinematicState.rollRate(static_cast<float>(0.0));
   kinematicState.pitchRate(static_cast<float>(0.0));
   m_od4.send(kinematicState, sampleTime, m_senderStamp);
-
   float groundSpeed = static_cast<float>(sqrt(pow(m_longitudinalSpeed,2)+pow(m_lateralSpeed,2)));
   opendlv::proxy::GroundSpeedReading groundSpeedReading;
   groundSpeedReading.groundSpeed(groundSpeed);
   m_od4.send(groundSpeedReading, sampleTime, m_senderStamp);
+  //std::cout<<"VehicleModel sends: "<<" vx: "<<m_longitudinalSpeed<<" vy: "<<m_lateralSpeed<<" yawRate: "<<m_yawRate<<" groundSpeed: "<<groundSpeed<<" sampleTime: "<<cluon::time::toMicroseconds(sampleTime)<< " senderStamp: "<<m_senderStamp<<"\n";
 }
 
 double VehicleModel::magicFormula(double const &a_slipAngle, double const &a_forceZ,

@@ -35,7 +35,7 @@ int32_t main(int32_t argc, char **argv) {
     std::cerr << "Example: " << argv[0] << "--cid=111 --id=120 --maxSteering=25.0 --maxAcceleration=5.0 --maxDeceleration=5.0" <<  std::endl;
     retCode = 1;
   } else {
-    const float freq{(commandlineArguments["id"].size() != 0) ? static_cast<float>(std::stof(commandlineArguments["freq"])) : (50.0f)};
+    const float freq{(commandlineArguments["freq"].size() != 0) ? static_cast<float>(std::stof(commandlineArguments["freq"])) : (50.0f)};
 
     // Interface to a running OpenDaVINCI session.
     cluon::OD4Session od4{static_cast<uint16_t>(std::stoi(commandlineArguments["cid"]))};

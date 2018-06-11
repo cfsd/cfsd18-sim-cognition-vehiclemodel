@@ -43,7 +43,7 @@ class VehicleModel {
 
   /* commandlineArguments */
   cluon::OD4Session &m_od4;
-  int m_senderStamp{203};
+  int m_senderStamp{232};
   double m_frontToCog{0.765f};
   double m_mass{188.0};
   double m_momentOfInertiaZ{105.0};
