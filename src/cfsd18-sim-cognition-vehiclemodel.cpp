@@ -30,11 +30,12 @@ int32_t main(int32_t argc, char **argv) {
   int32_t retCode{0};
   std::map<std::string, std::string> commandlineArguments = cluon::getCommandlineArguments(argc, argv);
   if (commandlineArguments.size()<=0) {
-    std::cerr << argv[0] << " is a NEAT driver implementation for the CFSD18 project." << std::endl;
-    std::cerr << "Usage:   " << argv[0] << " --cid=<OpenDaVINCI session> [--id=<Identifier in case of simulated units>] [--verbose] [Module specific parameters....]" << std::endl;
-    std::cerr << "Example: " << argv[0] << "--cid=111 --id=120 --maxSteering=25.0 --maxAcceleration=5.0 --maxDeceleration=5.0" <<  std::endl;
+    std::cerr << argv[0] << " is simulating a bicyclemodel that recieves heading and acceleration requests." << std::endl;
+    std::cerr << "Usage:   " << argv[0] << " --cid=<OpenDaVINCI session> [--id=<Identifier in case of simulated units>] [--verbose] [--freq] [Module specific parameters....]" << std::endl;
+    std::cerr << "Example: " << argv[0] << "--cid=111 --id=232 --freq=50 --mass=188 --length=1.53 [more...]" <<  std::endl;
     retCode = 1;
   } else {
+
     const float freq{(commandlineArguments["freq"].size() != 0) ? static_cast<float>(std::stof(commandlineArguments["freq"])) : (50.0f)};
 
     // Interface to a running OpenDaVINCI session.

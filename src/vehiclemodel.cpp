@@ -43,7 +43,7 @@ VehicleModel::~VehicleModel()
 }
 void VehicleModel::setUp(std::map<std::string, std::string> commandlineArguments)
 {
-  m_senderStamp=(commandlineArguments["senderStamp"].size() != 0) ? (static_cast<int>(std::stoi(commandlineArguments["senderStamp"]))) : (m_senderStamp);
+  m_senderStamp=(commandlineArguments["id"].size() != 0) ? (static_cast<int>(std::stoi(commandlineArguments["id"]))) : (m_senderStamp);
   m_frontToCog=(commandlineArguments["frontToCog"].size() != 0) ? (static_cast<float>(std::stof(commandlineArguments["frontToCog"]))) : (m_frontToCog);
 
   m_mass=(commandlineArguments["mass"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["mass"]))) : (m_mass);
