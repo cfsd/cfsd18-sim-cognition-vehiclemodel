@@ -1,1 +1,2 @@
-# cfsd18-cognition-track
+# cfsd18-sim-cognition-vehiclemodel
+Bicycle model for simulation
