@@ -181,10 +181,16 @@ void VehicleModel::body(){
   kinematicState.rollRate(static_cast<float>(0.0));
   kinematicState.pitchRate(static_cast<float>(0.0));
   m_od4.send(kinematicState, sampleTime, m_senderStamp);
+
   float groundSpeed = static_cast<float>(sqrt(pow(m_longitudinalSpeed,2)+pow(m_lateralSpeed,2)));
+
   opendlv::proxy::GroundSpeedReading groundSpeedReading;
   groundSpeedReading.groundSpeed(groundSpeed);
   m_od4.send(groundSpeedReading, sampleTime, m_senderStamp);
+
+  opendlv::proxy::AccelerationReading lateralAcceleration;
+  lateralAcceleration.accelerationY(static_cast<float>(lateralSpeedDot));
+  m_od4.send(lateralAcceleration, sampleTime, m_senderStamp);
   //std::cout<<"VehicleModel sends: "<<" vx: "<<m_longitudinalSpeed<<" vy: "<<m_lateralSpeed<<" yawRate: "<<m_yawRate<<" groundSpeed: "<<groundSpeed<<" sampleTime: "<<cluon::time::toMicroseconds(sampleTime)<< " senderStamp: "<<m_senderStamp<<"\n";
 }
 
