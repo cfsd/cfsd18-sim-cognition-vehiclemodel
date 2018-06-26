@@ -46,6 +46,7 @@ void VehicleModel::setUp(std::map<std::string, std::string> commandlineArguments
   m_senderStamp=(commandlineArguments["id"].size() != 0) ? (static_cast<int>(std::stoi(commandlineArguments["id"]))) : (m_senderStamp);
   m_frontToCog=(commandlineArguments["frontToCog"].size() != 0) ? (static_cast<float>(std::stof(commandlineArguments["frontToCog"]))) : (m_frontToCog);
 
+  m_rollRes=(commandlineArguments["rollRes"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["rollRes"]))) : (m_rollRes);
   m_mass=(commandlineArguments["mass"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["mass"]))) : (m_mass);
   m_momentOfInertiaZ=(commandlineArguments["momentOfInertiaZ"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["momentOfInertiaZ"]))) : (m_momentOfInertiaZ);
   m_length=(commandlineArguments["length"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["length"]))) : (m_length);
@@ -56,10 +57,10 @@ void VehicleModel::setUp(std::map<std::string, std::string> commandlineArguments
   m_magicFormulaE=(commandlineArguments["magicFormulaE"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["magicFormulaE"]))) : (m_magicFormulaE);
   double F =(commandlineArguments["freq"].size() != 0) ? (static_cast<double>(std::stod(commandlineArguments["freq"]))) : (0.05);
   m_dt = 1.0/F;
-  std::cout<<"VehicleModel set up with "<<commandlineArguments.size()<<" commandlineArguments: "<<std::endl;
+  /*std::cout<<"VehicleModel set up with "<<commandlineArguments.size()<<" commandlineArguments: "<<std::endl;
   for (std::map<std::string, std::string >::iterator it = commandlineArguments.begin();it !=commandlineArguments.end();it++){
     std::cout<<it->first<<" "<<it->second<<std::endl;
-  }
+  }*/
 }
 
 void VehicleModel::tearDown()
@@ -148,8 +149,8 @@ void VehicleModel::body(){
       m_frictionCoefficient, m_magicFormulaCAlpha, m_magicFormulaC, m_magicFormulaE);
 
   double rollResistance;
-  if (m_longitudinalSpeed>0) {rollResistance = -9.81*0.02;}
-  else if (m_longitudinalSpeed<0){rollResistance = 9.81*0.02;}
+  if (m_longitudinalSpeed>0) {rollResistance = -9.81*m_rollRes;}
+  else if (m_longitudinalSpeed<0){rollResistance = 9.81*m_rollRes;}
   else {rollResistance = 0.0;}
 
   m_longitudinalSpeedDot = groundAccelerationCopy - std::sin(groundSteeringAngleCopy)*forceFrontY/m_mass + m_yawRate * m_lateralSpeed + rollResistance;
